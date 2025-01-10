@@ -5,7 +5,7 @@ const client = new HfInference("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");
 document.getElementById("sendButton").addEventListener("click", async () => {
     const userInput = document.getElementById("userInput").value;
     if (!userInput) {
-        alert("Por favor, insira uma pergunta.");
+        alert("Vamos, insira uma pergunta.");
         return;
     }
 

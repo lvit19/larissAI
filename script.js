@@ -1,9 +1,10 @@
+import { HfInference } from "@huggingface/inference";
+
+const client = new HfInference("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");
+
 const chatBox = document.getElementById('chat-box');
 const userInput = document.getElementById('user-input');
 const sendBtn = document.getElementById('send-btn');
-
-const API_URL = 'https://api-inference.huggingface.co/models/microsoft/phi-4';
-const API_TOKEN = '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';
 
 sendBtn.addEventListener('click', async () => {
   const message = userInput.value.trim();
@@ -12,21 +13,18 @@ sendBtn.addEventListener('click', async () => {
     userInput.value = '';
 
     try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${API_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ inputs: message })
+      const chatCompletion = await client.chatCompletion({
+        model: "microsoft/phi-4",
+        messages: [
+          {
+            role: "user",
+            content: message
+          }
+        ],
+        max_tokens: 500
       });
 
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const result = await response.json();
-      const botReply = result && result.generated_text ? result.generated_text : 'Sorry, I did not understand that.';
+      const botReply = chatCompletion.choices[0].message.content || 'Sorry, I did not understand that.';
       addMessage('Bot', botReply);
     } catch (error) {
       console.error('Error fetching response:', error);

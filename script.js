@@ -10,19 +10,28 @@ sendBtn.addEventListener('click', async () => {
   if (message) {
     addMessage('User', message);
     userInput.value = '';
-    
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${API_TOKEN}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ inputs: message })
-    });
 
-    const result = await response.json();
-    const botReply = result.generated_text || 'Desculpa, não entendi.';
-    addMessage('Bot', botReply);
+    try {
+      const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${API_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ inputs: message })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      const botReply = result && result.generated_text ? result.generated_text : 'Sorry, I did not understand that.';
+      addMessage('Bot', botReply);
+    } catch (error) {
+      console.error('Error fetching response:', error);
+      addMessage('Bot', 'An error occurred while connecting to the AI service. Please try again later.');
+    }
   }
 });
 

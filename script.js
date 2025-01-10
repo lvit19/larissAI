@@ -21,7 +21,7 @@ sendBtn.addEventListener('click', async () => {
     });
 
     const result = await response.json();
-    const botReply = result.generated_text || 'Sorry, I did not understand that.';
+    const botReply = result.generated_text || 'Desculpa, não entendi.';
     addMessage('Bot', botReply);
   }
 });
